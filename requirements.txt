@@ -1,0 +1,29 @@
+# Core Framework
+flask>=3.1.0
+flask-sqlalchemy>=3.1.1
+flask-migrate>=4.1.0
+flask-jwt-extended>=4.7.1
+python-dotenv>=1.0.1
+werkzeug>=3.1.0
+
+# LangChain (AI Integration)
+langchain>=0.3.0
+langchain-core>=0.3.0
+langchain-anthropic>=0.3.0
+
+# Database
+sqlalchemy>=2.0.35
+
+# Input Validation
+marshmallow>=3.23.0
+
+# HTTP Requests (for tool extensions)
+requests>=2.32.0
+
+# Production Server
+gunicorn>=23.0.0
+
+# Phase 2 (installed but scaffold only for now)
+pandas>=2.2.0
+matplotlib>=3.10.0
+openpyxl>=3.1.0

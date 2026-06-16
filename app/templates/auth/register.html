@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}注册 - Python 多功能智能助手{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <h1 class="auth-title">创建账户</h1>
+        <p class="auth-subtitle">注册后即可使用全部功能</p>
+
+        <form id="registerForm" class="auth-form">
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" id="username" name="username"
+                       placeholder="3-30个字符" required minlength="3" maxlength="30">
+                <span class="form-error" id="usernameError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="email">邮箱</label>
+                <input type="email" id="email" name="email"
+                       placeholder="请输入邮箱地址" required>
+                <span class="form-error" id="emailError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" name="password"
+                       placeholder="至少6个字符" required minlength="6">
+                <span class="form-error" id="passwordError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">确认密码</label>
+                <input type="password" id="confirmPassword" name="confirmPassword"
+                       placeholder="请再次输入密码" required>
+                <span class="form-error" id="confirmPasswordError"></span>
+            </div>
+
+            <div class="form-error" id="formError" style="text-align: center;"></div>
+
+            <button type="submit" class="btn btn-primary btn-block" id="submitBtn">
+                注 册
+            </button>
+        </form>
+
+        <p class="auth-footer">
+            已有账户？<a href="{{ url_for('auth.login_page') }}">立即登录</a>
+        </p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+{% endblock %}

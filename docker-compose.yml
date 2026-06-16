@@ -1,0 +1,50 @@
+# Python 多功能智能助手 - Docker Compose 编排
+version: '3.8'
+
+services:
+  # Flask 应用
+  app:
+    build: .
+    container_name: assistant-app
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    environment:
+      - FLASK_ENV=production
+    volumes:
+      - ./instance:/app/instance
+      - ./static/charts:/app/static/charts
+      - ./static/uploads:/app/static/uploads
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_started
+
+  # Redis (会话缓存 & 未来队列)
+  redis:
+    image: redis:7-alpine
+    container_name: assistant-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+  # Nginx 反向代理
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: assistant-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./static:/app/static:ro
+    depends_on:
+      - app
+    restart: unless-stopped
+
+volumes:
+  redis_data:

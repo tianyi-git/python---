@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Python 多功能智能助手{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: center; align-items: center; min-height: calc(100vh - 56px); text-align: center;">
+    <div>
+        <h1 style="font-size: 48px; margin-bottom: 16px;">🤖</h1>
+        <h2 style="margin-bottom: 12px;">Python 多功能智能助手</h2>
+        <p style="color: var(--color-text-secondary); margin-bottom: 24px;">基于 Flask + Claude AI 的智能对话与分析平台</p>
+        <div style="display: flex; gap: 12px; justify-content: center;">
+            <a href="/chat" class="btn btn-primary">开始对话</a>
+            <a href="/data" class="btn btn-secondary">数据分析</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

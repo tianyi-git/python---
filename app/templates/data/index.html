@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}数据分析 - Python 多功能智能助手{% endblock %}
+
+{% block content %}
+<div class="data-layout">
+    <!-- 左侧：上传与控制面板 -->
+    <aside class="data-sidebar">
+        <h3>📊 数据分析</h3>
+
+        <!-- 文件上传 -->
+        <div class="panel-card">
+            <h4>📁 上传数据文件</h4>
+            <p class="panel-hint">支持 CSV / Excel (.xlsx, .xls) 格式</p>
+            <input type="file" id="fileInput" accept=".csv,.xls,.xlsx,.xlsm"
+                   style="display: none;">
+            <button class="btn btn-primary btn-block" id="uploadBtn">
+                选择文件并上传
+            </button>
+        </div>
+
+        <!-- 图表生成 -->
+        <div class="panel-card" id="chartPanel" style="display: none;">
+            <h4>📈 生成图表</h4>
+            <div class="form-group">
+                <label>图表类型</label>
+                <select id="chartType">
+                    <option value="line">折线图</option>
+                    <option value="bar">柱状图</option>
+                    <option value="pie">饼图</option>
+                    <option value="scatter">散点图</option>
+                    <option value="hist">直方图</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>X 轴列名 (可选)</label>
+                <input type="text" id="xCol" placeholder="留空自动选择">
+            </div>
+            <div class="form-group">
+                <label>Y 轴列名 (可选)</label>
+                <input type="text" id="yCol" placeholder="留空自动选择">
+            </div>
+            <button class="btn btn-primary btn-block" id="generateChartBtn">生成图表</button>
+        </div>
+
+        <!-- 数据查询 -->
+        <div class="panel-card" id="queryPanel" style="display: none;">
+            <h4>🔍 数据筛选 (Pandas Query)</h4>
+            <div class="form-group">
+                <input type="text" id="queryStr" placeholder="例: age > 30 and city == '北京'">
+            </div>
+            <button class="btn btn-secondary btn-block" id="queryBtn">执行查询</button>
+            <button class="btn btn-secondary btn-block" id="correlationBtn"
+                    style="margin-top: 4px;">相关性分析</button>
+        </div>
+
+        <!-- 数据概览 -->
+        <div class="panel-card" id="infoPanel" style="display: none;">
+            <h4>📋 数据概览</h4>
+            <div id="fileInfo"></div>
+        </div>
+    </aside>
+
+    <!-- 右侧：结果展示 -->
+    <div class="data-main">
+        <div id="dataTabs" class="data-tabs" style="display: none;">
+            <button class="data-tab active" data-tab="preview">数据预览</button>
+            <button class="data-tab" data-tab="stats">统计分析</button>
+            <button class="data-tab" data-tab="chart">图表</button>
+            <button class="data-tab" data-tab="query">查询结果</button>
+        </div>
+
+        <!-- 数据预览 -->
+        <div class="tab-content active" id="tab-preview">
+            <div id="emptyUpload" class="empty-state">
+                <div class="empty-state-icon">📂</div>
+                <h3>上传数据文件开始分析</h3>
+                <p>支持 CSV 和 Excel 文件，自动解析并生成统计报告和可视化图表</p>
+            </div>
+            <div id="previewTable" class="table-wrapper" style="display: none;"></div>
+        </div>
+
+        <!-- 统计 -->
+        <div class="tab-content" id="tab-stats">
+            <div id="statsContent"></div>
+        </div>
+
+        <!-- 图表 -->
+        <div class="tab-content" id="tab-chart">
+            <div id="chartContent" style="text-align: center;"></div>
+        </div>
+
+        <!-- 查询结果 -->
+        <div class="tab-content" id="tab-query">
+            <div id="queryContent"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/data.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}智能对话 - Python 多功能智能助手{% endblock %}
+
+{% block content %}
+<div class="chat-layout">
+    <!-- 侧边栏：会话列表 -->
+    <aside class="chat-sidebar">
+        <div class="sidebar-header">
+            <button class="btn btn-primary" id="newChatBtn">＋ 新建对话</button>
+        </div>
+        <div class="session-list" id="sessionList">
+            <!-- JS 动态填充 -->
+        </div>
+    </aside>
+
+    <!-- 对话主区域 -->
+    <div class="chat-main">
+        <div class="chat-header">
+            <input type="text" class="chat-header-title" id="chatTitle"
+                   value="新的对话" placeholder="对话标题（可编辑）">
+            <select id="modelSelect" title="切换模型">
+                <option value="claude">Claude</option>
+                <option value="deepseek">DeepSeek</option>
+            </select>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="empty-state" id="emptyState">
+                <div class="empty-state-icon">🤖</div>
+                <h3>开始对话</h3>
+                <p>在下方输入你的问题，AI 助手将为你解答</p>
+            </div>
+        </div>
+
+        <div class="chat-input-area">
+            <div class="chat-input-row">
+                <textarea id="messageInput" placeholder="输入你的问题... (Enter 发送, Shift+Enter 换行)"
+                          rows="1" maxlength="10000"></textarea>
+                <button class="btn btn-primary" id="sendBtn" disabled>发送</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 右侧面板：设置 -->
+    <div class="chat-panel" id="chatPanel">
+        <div class="panel-section">
+            <h4>系统提示词</h4>
+            <textarea id="systemPrompt" placeholder="设置 AI 的行为和角色..."></textarea>
+            <button class="btn btn-secondary" id="saveSystemPrompt" style="margin-top: 8px; width: 100%;">
+                保存提示词
+            </button>
+        </div>
+        <div class="panel-section">
+            <h4>可用模型</h4>
+            <div id="modelList">
+                <!-- JS 动态填充 -->
+            </div>
+        </div>
+        <div class="panel-section">
+            <h4>使用提示</h4>
+            <ul style="font-size: 13px; color: var(--color-text-secondary); padding-left: 16px; line-height: 1.8;">
+                <li>Enter 快速发送</li>
+                <li>Shift+Enter 换行</li>
+                <li>左侧切换历史会话</li>
+                <li>右侧可自定义提示词</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+{% endblock %}

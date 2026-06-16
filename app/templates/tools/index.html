@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}工具集 - Python 多功能智能助手{% endblock %}
+
+{% block content %}
+<div class="tools-container">
+    <h2 style="margin-bottom: 24px;">🔧 实用工具集</h2>
+
+    <div class="tools-grid">
+        <!-- 天气查询 -->
+        <div class="tool-card">
+            <div class="tool-icon">🌤️</div>
+            <h3>天气查询</h3>
+            <p>查询全球城市实时天气</p>
+            <div class="form-group">
+                <input type="text" id="weatherCity" placeholder="输入城市名，如 Beijing, Tokyo">
+            </div>
+            <button class="btn btn-primary btn-block" id="weatherBtn">查询天气</button>
+            <div id="weatherResult" class="tool-result"></div>
+        </div>
+
+        <!-- 计算器 -->
+        <div class="tool-card">
+            <div class="tool-icon">🔢</div>
+            <h3>科学计算器</h3>
+            <p>支持 + - * / ( ) 等运算</p>
+            <div class="form-group">
+                <input type="text" id="calcExpr" placeholder="例: (100 + 50) * 2 / 3">
+            </div>
+            <button class="btn btn-primary btn-block" id="calcBtn">计算</button>
+            <div id="calcResult" class="tool-result"></div>
+        </div>
+
+        <!-- 文本统计 -->
+        <div class="tool-card">
+            <div class="tool-icon">📝</div>
+            <h3>文本处理</h3>
+            <p>字数统计、编码转换、哈希计算</p>
+            <div class="form-group">
+                <textarea id="textInput" rows="4" placeholder="输入或粘贴文本..."></textarea>
+            </div>
+            <div class="tool-btn-group">
+                <button class="btn btn-secondary btn-sm" data-action="count">字数统计</button>
+                <button class="btn btn-secondary btn-sm" data-action="base64_encode">Base64编码</button>
+                <button class="btn btn-secondary btn-sm" data-action="base64_decode">Base64解码</button>
+                <button class="btn btn-secondary btn-sm" data-action="md5">MD5</button>
+                <button class="btn btn-secondary btn-sm" data-action="sha256">SHA256</button>
+                <button class="btn btn-secondary btn-sm" data-action="reverse">反转</button>
+                <button class="btn btn-secondary btn-sm" data-action="upper">大写</button>
+                <button class="btn btn-secondary btn-sm" data-action="lower">小写</button>
+            </div>
+            <div id="textResult" class="tool-result"></div>
+        </div>
+
+        <!-- JSON 格式化 -->
+        <div class="tool-card">
+            <div class="tool-icon">📋</div>
+            <h3>JSON 格式化</h3>
+            <p>验证并格式化 JSON 字符串</p>
+            <div class="form-group">
+                <textarea id="jsonInput" rows="5"
+                    placeholder='{"name": "test", "value": 123}'></textarea>
+            </div>
+            <button class="btn btn-primary btn-block" id="jsonBtn">格式化</button>
+            <div id="jsonResult" class="tool-result"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/tools.js') }}"></script>
+{% endblock %}

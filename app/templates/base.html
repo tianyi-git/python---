@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Python 多功能智能助手{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <a href="/">🤖 智能助手</a>
+        </div>
+        <div class="navbar-links" id="navbarLinks">
+            <a href="/chat">💬 对话</a>
+            <a href="/data">📊 数据分析</a>
+            <a href="/tools">🔧 工具</a>
+            <a href="/auth/profile">👤 个人中心</a>
+            <a href="#" id="logoutBtn" class="btn-logout">退出</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        {% if error %}
+        <div class="alert alert-error">{{ error }}</div>
+        {% endif %}
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="{{ url_for('static', filename='js/api.js') }}"></script>
+    <script>
+        // 导航栏退出按钮
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            API.post('/auth/api/auth/logout').then(function() {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/auth/login';
+            });
+        });
+
+        // 根据登录状态调整导航栏
+        if (localStorage.getItem('token')) {
+            document.getElementById('navbarLinks').style.display = 'flex';
+        }
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
