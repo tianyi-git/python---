@@ -29,7 +29,7 @@ class Config:
     DEEPSEEK_API_KEY = os.getenv('DEEPSEEK_API_KEY', '')
 
     # LLM 默认设置
-    DEFAULT_MODEL = os.getenv('DEFAULT_MODEL', 'claude')
+    DEFAULT_MODEL = os.getenv('DEFAULT_MODEL', 'deepseek')
     MAX_CONTEXT_MESSAGES = 20  # 每次请求携带的最大历史消息数
 
     # 上传文件限制

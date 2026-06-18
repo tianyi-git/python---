@@ -112,7 +112,7 @@ class LLMService:
     def chat(
         self,
         messages: list,
-        model_name: str = 'claude',
+        model_name: str = 'deepseek',
         system_prompt: Optional[str] = None,
     ) -> dict:
         """
@@ -179,9 +179,23 @@ class LLMService:
         model = self._get_claude_model()
         if not model:
             return None
-        # langchain-anthropic 直接接受消息列表
-        response = model.invoke(messages)
-        return response.content if hasattr(response, 'content') else str(response)
+        try:
+            # langchain-anthropic 直接接受消息列表
+            response = model.invoke(messages)
+            if hasattr(response, 'content'):
+                content = response.content
+                # content 可能是 str 或 list[ContentBlock] (多模态)
+                if isinstance(content, str):
+                    return content
+                if isinstance(content, list):
+                    return ''.join(
+                        b.get('text', '') if isinstance(b, dict) else str(b)
+                        for b in content
+                    )
+            return str(response)
+        except Exception as e:
+            logger.error(f'Claude 调用异常: {e}')
+            return None
 
     def _retry_call(self, call_fn, model_name: str) -> dict:
         """带重试的调用包装"""
@@ -209,22 +223,10 @@ class LLMService:
         }
 
     def get_available_models(self) -> list:
-        """返回当前可用的模型列表"""
+        """返回当前可用的模型列表（DeepSeek 为主要模型）"""
         models = []
-        if self._claude_available or self._get_claude_model():
-            models.append({
-                'id': 'claude',
-                'name': 'Claude (Anthropic)',
-                'available': True,
-            })
-        else:
-            models.append({
-                'id': 'claude',
-                'name': 'Claude (Anthropic)',
-                'available': False,
-                'hint': '请设置 ANTHROPIC_API_KEY 环境变量',
-            })
 
+        # DeepSeek（主要模型）
         deepseek_key = self.config.get('DEEPSEEK_API_KEY', '')
         deepseek_ok = bool(deepseek_key and deepseek_key != 'your-deepseek-key-here')
         models.append({
@@ -232,6 +234,16 @@ class LLMService:
             'name': 'DeepSeek',
             'available': deepseek_ok,
             'hint': '' if deepseek_ok else '请设置 DEEPSEEK_API_KEY 环境变量',
+        })
+
+        # Claude（备用模型）
+        claude_model = self._get_claude_model()
+        claude_available = claude_model is not None
+        models.append({
+            'id': 'claude',
+            'name': 'Claude (Anthropic)',
+            'available': claude_available,
+            'hint': '' if claude_available else '请设置 ANTHROPIC_API_KEY 环境变量',
         })
 
         return models

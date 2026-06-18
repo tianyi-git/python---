@@ -28,18 +28,20 @@ def create_app(config_name=None):
     from app.tools import tools_bp
 
     app.register_blueprint(main_bp)
-    app.register_blueprint(auth_bp, url_prefix='/auth')
+    app.register_blueprint(auth_bp)
     app.register_blueprint(chat_bp)
-    app.register_blueprint(data_bp, url_prefix='/data')
-    app.register_blueprint(tools_bp, url_prefix='/tools')
+    app.register_blueprint(data_bp)
+    app.register_blueprint(tools_bp)
 
     # 注册错误处理器
     from app.errors import register_error_handlers
     register_error_handlers(app)
 
-    # 创建数据库表（开发环境便利，生产环境应使用迁移）
+    # SQLite 自动建表（开发/测试便利），PostgreSQL 生产环境请用 Flask-Migrate 迁移
     with app.app_context():
         from app.models import User, ChatSession, ChatMessage
-        db.create_all()
+        db_uri = app.config.get('SQLALCHEMY_DATABASE_URI', '')
+        if 'sqlite' in db_uri:
+            db.create_all()
 
     return app

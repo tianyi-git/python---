@@ -26,13 +26,13 @@ class SendMessageSchema(Schema):
 class CreateSessionSchema(Schema):
     title = fields.String(required=False)
     model_name = fields.String(required=False)
-    system_prompt = fields.String(required=False)
+    system_prompt = fields.String(required=False, allow_none=True)
 
 
 class UpdateSessionSchema(Schema):
     title = fields.String()
     model_name = fields.String()
-    system_prompt = fields.String()
+    system_prompt = fields.String(allow_none=True)
 
 
 # ============================================================
@@ -90,7 +90,7 @@ def api_create_session():
     session = SessionManager.create_session(
         user_id=user.id,
         title=validated.get('title', '新的对话'),
-        model_name=validated.get('model_name', 'claude'),
+        model_name=validated.get('model_name', 'deepseek'),
         system_prompt=validated.get('system_prompt'),
     )
     return jsonify({
@@ -184,7 +184,7 @@ def api_send_message():
         session = SessionManager.create_session(
             user_id=user.id,
             title=title,
-            model_name=validated.get('model', 'claude'),
+            model_name=validated.get('model', 'deepseek'),
         )
         session_id = session.id
 
@@ -269,7 +269,7 @@ def api_stream_chat():
         session = SessionManager.create_session(
             user_id=user.id,
             title=title,
-            model_name=validated.get('model', 'claude'),
+            model_name=validated.get('model', 'deepseek'),
         )
         session_id = session.id
 
@@ -289,22 +289,37 @@ def api_stream_chat():
     full_reply_parts = []
 
     def generate():
-        api_key = current_app.config.get('ANTHROPIC_API_KEY', '')
+        # 根据模型选择对应的流式方法
+        is_deepseek = model_name.startswith('deepseek') if model_name else True
 
-        if enable_tools:
-            tools = get_anthropic_tools()
-            stream = StreamChatService.stream_chat_with_tools(
+        if is_deepseek:
+            # DeepSeek 流式（OpenAI 兼容 SSE）
+            api_key = current_app.config.get('DEEPSEEK_API_KEY', '')
+            stream = StreamChatService.stream_chat_deepseek(
                 messages=context_messages,
                 api_key=api_key,
-                tools=tools,
                 system_prompt=session.system_prompt,
+                model='deepseek-chat',
             )
         else:
-            stream = StreamChatService.stream_chat(
-                messages=context_messages,
-                api_key=api_key,
-                system_prompt=session.system_prompt,
-            )
+            # Claude/Anthropic 流式
+            api_key = current_app.config.get('ANTHROPIC_API_KEY', '')
+            if enable_tools:
+                tools = get_anthropic_tools()
+                stream = StreamChatService.stream_chat_with_tools(
+                    messages=context_messages,
+                    api_key=api_key,
+                    tools=tools,
+                    system_prompt=session.system_prompt,
+                    model=model_name,
+                )
+            else:
+                stream = StreamChatService.stream_chat(
+                    messages=context_messages,
+                    api_key=api_key,
+                    system_prompt=session.system_prompt,
+                    model=model_name,
+                )
 
         for chunk in stream:
             full_reply_parts.append(chunk)
@@ -317,8 +332,13 @@ def api_stream_chat():
             for chunk in full_reply_parts:
                 if chunk.startswith('data: '):
                     try:
-                        payload = json.loads(chunk[6:])
-                        if 'text' in payload:
+                        # SSE 格式为 "data: {...}\n\n"，需 strip 末尾换行再解析
+                        payload = json.loads(chunk[6:].strip())
+                        if 'done' in payload:
+                            continue
+                        if 'error' in payload:
+                            full_text += '\n\n[Error] ' + payload['error']
+                        elif 'text' in payload:
                             full_text += payload['text']
                         elif 'tool_call' in payload:
                             tool_calls.append(payload['tool_call'])

@@ -55,7 +55,7 @@
 
         if (isLogin) {
             // ---- 登录 ----
-            API.post('/auth/api/auth/login', {
+            API.post('/api/auth/login', {
                 username: username,
                 password: password,
             }).then(function(res) {
@@ -87,7 +87,7 @@
                 return;
             }
 
-            API.post('/auth/api/auth/register', {
+            API.post('/api/auth/register', {
                 username: username,
                 email: email,
                 password: password,

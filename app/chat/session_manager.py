@@ -2,6 +2,11 @@
 会话上下文管理器
 管理对话历史的持久化、检索和上下文裁剪
 """
+from __future__ import annotations
+
+from datetime import datetime, timezone
+from typing import Optional
+
 from app.extensions import db
 from app.models.chat_session import ChatSession
 from app.models.chat_message import ChatMessage
@@ -14,7 +19,7 @@ class SessionManager:
     def create_session(
         user_id: int,
         title: str = '新的对话',
-        model_name: str = 'claude',
+        model_name: str = 'deepseek',
         system_prompt: str = None,
     ) -> ChatSession:
         """创建新会话"""
@@ -39,7 +44,7 @@ class SessionManager:
         )
 
     @staticmethod
-    def get_session(session_id: int, user_id: int) -> ChatSession | None:
+    def get_session(session_id: int, user_id: int) -> Optional[ChatSession]:
         """获取指定会话（确保属于当前用户）"""
         return ChatSession.query.filter_by(id=session_id, user_id=user_id).first()
 
@@ -54,7 +59,7 @@ class SessionManager:
         return True
 
     @staticmethod
-    def update_session(session_id: int, user_id: int, **kwargs) -> ChatSession | None:
+    def update_session(session_id: int, user_id: int, **kwargs) -> Optional[ChatSession]:
         """更新会话信息（标题、模型、system_prompt）"""
         session = SessionManager.get_session(session_id, user_id)
         if not session:
@@ -85,16 +90,15 @@ class SessionManager:
             token_count=token_count,
         )
         db.session.add(message)
-        # 同时更新会话的 updated_at
+        # 手动更新会话的 updated_at（因为插入新消息不会触发会话行的 UPDATE）
         session = ChatSession.query.get(session_id)
         if session:
-            from datetime import datetime, timezone
             session.updated_at = datetime.now(timezone.utc)
         db.session.commit()
         return message
 
     @staticmethod
-    def get_messages(session_id: int, limit: int = None) -> list:
+    def get_messages(session_id: int, limit: Optional[int] = None) -> list:
         """获取会话的消息列表"""
         query = ChatMessage.query.filter_by(session_id=session_id).order_by(ChatMessage.created_at)
         if limit:
@@ -123,8 +127,9 @@ class SessionManager:
         return context
 
     @staticmethod
-    def auto_title(session_id: int, first_message: str) -> str:
-        """根据首条消息自动生成会话标题"""
+    def auto_title(session_id: Optional[int], first_message: str) -> str:
+        """根据首条消息自动生成会话标题（session_id 留作未来扩展）"""
+        _ = session_id  # 保留参数，未来可用于上下文感知标题生成
         # 取前30个字符作为标题
         title = first_message.strip().replace('\n', ' ')[:30]
         if len(title) < len(first_message.strip()):

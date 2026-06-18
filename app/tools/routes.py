@@ -15,7 +15,7 @@ from app.auth.decorators import login_required_api, login_required_page
 # 页面路由
 # ============================================================
 
-@tools_bp.route('/')
+@tools_bp.route('/tools')
 @login_required_page
 def tools_page():
     """工具集页面"""

@@ -18,7 +18,7 @@
         btn.disabled = true;
         btn.textContent = '查询中...';
 
-        API.post('/tools/api/tools/weather', { city: city }).then(function(res) {
+        API.post('/api/tools/weather', { city: city }).then(function(res) {
             var d = res.data;
             var iconUrl = 'https://openweathermap.org/img/wn/' + d.weather_icon + '@2x.png';
             document.getElementById('weatherResult').innerHTML =
@@ -54,7 +54,7 @@
         var btn = this;
         btn.disabled = true;
 
-        API.post('/tools/api/tools/calculator', { expression: expr }).then(function(res) {
+        API.post('/api/tools/calculator', { expression: expr }).then(function(res) {
             document.getElementById('calcResult').innerHTML =
                 '<div class="calc-display">' +
                 '<div style="color:var(--color-text-muted);">' +
@@ -76,7 +76,7 @@
             if (!text) { showToast('请先输入文本', 'info'); return; }
 
             var action = this.dataset.action;
-            API.post('/tools/api/tools/text', { action: action, text: text }).then(function(res) {
+            API.post('/api/tools/text', { action: action, text: text }).then(function(res) {
                 var html = '<div class="text-result-box">';
                 if (action === 'count') {
                     html += '<p>📏 字符数: <strong>' + res.data.chars + '</strong></p>';
@@ -104,7 +104,7 @@
         var btn = this;
         btn.disabled = true;
 
-        API.post('/tools/api/tools/json', { json_str: jsonStr }).then(function(res) {
+        API.post('/api/tools/json', { json_str: jsonStr }).then(function(res) {
             document.getElementById('jsonResult').innerHTML =
                 '<div class="text-result-box">' +
                 '<p style="color:var(--color-success);">✅ JSON 格式正确</p>' +

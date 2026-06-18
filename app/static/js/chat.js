@@ -124,7 +124,7 @@
         API.post('/api/chat/sessions', {
             title: '新的对话',
             model_name: state.currentModel,
-            system_prompt: $systemPrompt.value || null,
+            system_prompt: $systemPrompt.value || '你是一个有帮助的AI助手。',
         }).then(function(res) {
             state.currentSessionId = res.data.session.id;
             $chatTitle.value = '新的对话';
@@ -271,7 +271,7 @@
             API.post('/api/chat/sessions', {
                 title: title,
                 model_name: state.currentModel,
-                system_prompt: $systemPrompt.value || null,
+                system_prompt: $systemPrompt.value || '你是一个有帮助的AI助手。',
             }).then(function(res) {
                 state.currentSessionId = res.data.session.id;
                 $chatTitle.value = title;

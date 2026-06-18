@@ -43,19 +43,19 @@ class ChangePasswordSchema(Schema):
 # 页面路由
 # ============================================================
 
-@auth_bp.route('/login', methods=['GET'])
+@auth_bp.route('/auth/login', methods=['GET'])
 def login_page():
     """登录页面"""
     return render_template('auth/login.html')
 
 
-@auth_bp.route('/register', methods=['GET'])
+@auth_bp.route('/auth/register', methods=['GET'])
 def register_page():
     """注册页面"""
     return render_template('auth/register.html')
 
 
-@auth_bp.route('/profile', methods=['GET'])
+@auth_bp.route('/auth/profile', methods=['GET'])
 @login_required_page
 def profile_page():
     """个人资料页面"""

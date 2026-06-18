@@ -56,7 +56,7 @@
 
     // 加载用户信息
     function loadProfile() {
-        API.get('/auth/api/auth/me').then(function(res) {
+        API.get('/api/auth/me').then(function(res) {
             var user = res.data.user;
             document.getElementById('displayUsername').value = user.username;
             document.getElementById('profileEmail').value = user.email || '';
@@ -72,7 +72,7 @@
         var email = document.getElementById('profileEmail').value.trim();
         var avatar = document.getElementById('profileAvatar').value.trim();
 
-        API.put('/auth/api/auth/profile', { email: email, avatar: avatar || null }).then(function(res) {
+        API.put('/api/auth/profile', { email: email, avatar: avatar || null }).then(function(res) {
             showMsg('profileMsg', '资料更新成功!', 'success');
             // 更新 localStorage
             localStorage.setItem('user', JSON.stringify(res.data.user));
@@ -100,7 +100,7 @@
             return;
         }
 
-        API.put('/auth/api/auth/password', {
+        API.put('/api/auth/password', {
             old_password: oldPwd,
             new_password: newPwd,
         }).then(function() {

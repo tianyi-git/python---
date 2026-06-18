@@ -42,7 +42,7 @@
         // 导航栏退出按钮
         document.getElementById('logoutBtn').addEventListener('click', function(e) {
             e.preventDefault();
-            API.post('/auth/api/auth/logout').then(function() {
+            API.post('/api/auth/logout').then(function() {
                 localStorage.removeItem('token');
                 localStorage.removeItem('user');
                 window.location.href = '/auth/login';

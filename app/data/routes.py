@@ -20,7 +20,7 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 # 页面路由
 # ============================================================
 
-@data_bp.route('/')
+@data_bp.route('/data')
 @login_required_page
 def data_page():
     """数据分析页面"""

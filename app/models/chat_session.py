@@ -11,7 +11,7 @@ class ChatSession(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
     title = db.Column(db.String(200), nullable=False, default='新的对话')
-    model_name = db.Column(db.String(50), nullable=False, default='claude')
+    model_name = db.Column(db.String(50), nullable=False, default='deepseek')
     system_prompt = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = db.Column(

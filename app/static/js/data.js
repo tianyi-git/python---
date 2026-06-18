@@ -72,11 +72,19 @@
         $uploadBtn.disabled = true;
         $uploadBtn.textContent = '解析中...';
 
-        fetch('/data/api/data/upload', {
+        fetch('/api/data/upload', {
             method: 'POST',
             headers: { 'Authorization': 'Bearer ' + API.getToken() },
             body: formData,
-        }).then(function(resp) { return resp.json(); })
+        }).then(function(resp) {
+            if (resp.status === 401) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/auth/login';
+                return Promise.reject(new Error('未登录'));
+            }
+            return resp.json();
+        })
           .then(function(res) {
               if (res.code === 200) {
                   state.fileId = res.data.file_id;
@@ -194,7 +202,7 @@
         $generateChartBtn.disabled = true;
         $generateChartBtn.textContent = '生成中...';
 
-        API.post('/data/api/data/chart', {
+        API.post('/api/data/chart', {
             saved_name: state.savedName,
             chart_type: chartType,
             x_col: xCol,
@@ -221,7 +229,7 @@
             return;
         }
 
-        API.post('/data/api/data/query', {
+        API.post('/api/data/query', {
             saved_name: state.savedName,
             query: query,
         }).then(function(res) {
@@ -250,7 +258,7 @@
     }
 
     function showCorrelation() {
-        API.post('/data/api/data/correlation', {
+        API.post('/api/data/correlation', {
             saved_name: state.savedName,
         }).then(function(res) {
             switchTab('query');
